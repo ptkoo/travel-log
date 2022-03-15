@@ -3,15 +3,27 @@ const express = require('express');
 const morgan = require('morgan');
 const helmet = require('helmet');
 const cors = require('cors');
+const mongoose = require('mongoose');
+require('dotenv').config();
 
 const middlewares = require('./middlewares');
 
+const logs = require('./api/log');
+
 const app = express();
+
+// eslint-disable-next-line no-use-before-define
+main().catch((err) => console.log(err));
+
+async function main() {
+  await mongoose.connect(process.env.DATABASE_URL);
+}
+
 app.use(morgan('common'));
 app.use(helmet());
 app.use(
   cors({
-    origin: 'http://localhost:3000',
+    origin: process.env.CORS_ORIGIN,
   }),
 );
 // the default error log is not useful so we set up our own json type error handler
@@ -22,6 +34,7 @@ app.get('/', (req, res) => {
   });
 });
 
+app.use('/api/logs', logs);
 // not found middleware (specific)
 
 app.use(middlewares.notFound);
