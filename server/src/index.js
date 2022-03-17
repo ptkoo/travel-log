@@ -26,6 +26,8 @@ app.use(
     origin: process.env.CORS_ORIGIN,
   }),
 );
+app.use(express.json()); // body parsing middleware
+
 // the default error log is not useful so we set up our own json type error handler
 
 app.get('/', (req, res) => {
